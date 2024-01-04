@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Login page</title>
+        <link rel="icon" href="./assets/images/favicon.png" type="image/png" />
+        <link rel="stylesheet" href="/css/styles.css" />
+        <script src="/js/login.js" defer type="module"></script>
+    </head>
+    <body>
+        <header>
+            <nav class="navbar">
+                <div class="navbar-logo">
+                    <span class="navbar-title"><a href="/">Shark Attack</a></span
+                    ><a href="/"
+                        ><img src="/assets/images/Logo.svg" alt="Shark Attack Logo"
+                    /></a>
+                </div>
+
+                <!-- Hamburger Icon -->
+                <div class="hamburger" id="hamburger-icon">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+
+                <div class="navbar-links" id="navbar-links">
+                    <a href="index.html">Homepage</a>
+                    <a href="https://shark.gloor.dev" target="_blank">About us</a>
+                    <a href="game.html">The Game</a>
+                    <a href="leaderboard.html">Leaderboard</a>
+                    <a href="login.html" id="loginLink">Login</a>
+                </div>
+            </nav>
+        </header>
+        <main class="content">
+            <div class="header-container">
+                <h1>Login</h1>
+                <img src="/assets/images/Logo.svg" alt="Shark Attack Logo" />
+            </div>
+            <form id="loginForm" class="form-style">
+                <div id="loginError" class="error-message hidden"></div>
+                <input type="text" id="username" placeholder="username" required />
+                <div class="input-group">
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Password"
+                        required
+                    />
+                    <span
+                        class="password-toggle"
+                        onclick="togglePasswordVisibility('password')"
+                        >&#128065;</span
+                    >
+                </div>
+
+                <button type="submit" id="loginButton" class="form-btn">Login</button>
+                <hr />
+                <div class="main-buttons">
+                    <p class="p-account">
+                        No account?
+                        <a href="register.html" class="register-link">Join the fun!</a>
+                    </p>
+                    <a class="main-btn" href="register.html">Register</a>
+                </div>
+            </form>
+        </main>
+        <footer class="footer">
+            <p>made with &lt;3 from the shark attack team</p>
+        </footer>
+        <script>
+            // Toggle the visibility of the navbar links when hamburger icon is clicked
+            document
+                .getElementById("hamburger-icon")
+                .addEventListener("click", function () {
+                    document.getElementById("navbar-links").classList.toggle("active");
+                });
+
+            // Toggle the visibility of the password field
+            function togglePasswordVisibility(passwordFieldId) {
+                var passwordInput = document.getElementById(passwordFieldId);
+                if (passwordInput.type === "password") {
+                    passwordInput.type = "text";
+                } else {
+                    passwordInput.type = "password";
+                }
+            }
+        </script>
+    </body>
+</html>

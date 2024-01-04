@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Game Over</title>
+        <link rel="icon" href="./assets/images/favicon.png" type="image/png" />
+        <link rel="stylesheet" href="/css/styles.css" />
+        <script src="/js/login.js" defer type="module"></script>
+        <script src="/js/profilePicture.js" defer></script>
+    </head>
+    <body>
+        <header>
+            <nav class="navbar">
+                <div class="navbar-logo">
+                    <span class="navbar-title"><a href="/">Shark Attack</a></span
+                    ><a href="/"
+                        ><img src="/assets/images/Logo.svg" alt="Shark Attack Logo"
+                    /></a>
+                </div>
+
+                <!-- Hamburger Icon -->
+                <div class="hamburger" id="hamburger-icon">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+
+                <div class="navbar-links" id="navbar-links">
+                    <a href="index.html">Homepage</a>
+                    <a href="https://shark.gloor.dev" target="_blank">About us</a>
+                    <a href="game.html">The Game</a>
+                    <a href="leaderboard.html">Leaderboard</a>
+                    <a href="login.html" id="loginLink">Login</a>
+                    <img src="" alt="Profile Pic" id="navbarProfilePic" class="navbar-profile-pic" />
+                </div>
+            </nav>
+        </header>
+        <main class="content">
+            <div class="header-container">
+                <h1>Game Over</h1>
+                <img src="/assets/images/Logo.svg" alt="Shark Attack Logo" />
+            </div>
+            <h2 id="score">Your score was :</h2>
+            <div class="main-buttons">
+                <a class="main-btn" href="game.html">Play Again</a>
+                <a class="main-btn" href="leaderboard.html">Leaderboard</a>
+            </div>
+        </main>
+        <footer class="footer">
+            <p>made with &lt;3 from the shark attack team</p>
+        </footer>
+        <script>
+            // Display the score in the HTML
+            function displayScore(score) {
+                const scoreElement = document.getElementById("score");
+                scoreElement.textContent = `Your score was: ${score}`;
+            }
+
+            // Send the score to the server only if the user is logged in
+            function sendScoreToServer(score) {
+                const userToken = localStorage.getItem("userToken");
+                if (userToken) {
+                    displayScore(score);
+                    fetchScore(score, userToken);
+                } else {
+                    displayScore(score + " / login to save the score !");
+                    console.log("User is not logged in, score will not be saved");
+                }
+            }
+
+            // Fetch and display the profile picture
+            function fetchAndDisplayProfilePicture(elementId) {
+                const profilePicElement = document.getElementById(elementId);
+                // Fetch the profile picture URL from the server
+                // and set it as the source of the image element
+            }
+
+            // Fetch the score to the server
+            function fetchScore(score, userToken) {
+                fetch("https://shark-cms.gloor.dev/wp-json/wp/v2/score/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: "Bearer " + userToken,
+                    },
+                    body: JSON.stringify({ score }),
+                })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error("Network response was not ok");
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        //console.log('Score saved:', data);
+                    })
+                    .catch((error) => {
+                        console.error(
+                            "There has been a problem with your fetch operation:",
+                            error
+                        );
+                    });
+            }
+
+            // Play collision sound
+            function playCollisionSound() {
+                const collisionSound = new Audio("./assets/audio/stink.mp3");
+                collisionSound.volume = 0.3;
+                collisionSound.play();
+            }
+
+            // On page load
+            window.onload = function () {
+                const score = localStorage.getItem("lastScore");
+                sendScoreToServer(score);
+            };
+
+            // On DOM content loaded
+            document.addEventListener("DOMContentLoaded", () => {
+                fetchAndDisplayProfilePicture("navbarProfilePic");
+                playCollisionSound();
+            });
+        </script>
+    </body>
+</html>

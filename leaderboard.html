@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Leaderboard</title>
+        <link rel="icon" href="./assets/images/favicon.png" type="image/png" />
+        <link rel="stylesheet" href="/css/styles.css" />
+        <script src="/js/login.js" defer type="module"></script>
+        <script src="/js/profilePicture.js" defer></script>
+    </head>
+    <body>
+        <header>
+            <nav class="navbar">
+                <div class="navbar-logo">
+                    <span class="navbar-title"><a href="/">Shark Attack</a></span
+                    ><a href="/"
+                        ><img src="/assets/images/Logo.svg" alt="Shark Attack Logo"
+                    /></a>
+                </div>
+
+                <!-- Hamburger Icon -->
+                <div class="hamburger" id="hamburger-icon">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+
+                <div class="navbar-links" id="navbar-links">
+                    <a href="index.html">Homepage</a>
+                    <a href="https://shark.gloor.dev" target="_blank">About us</a>
+                    <a href="game.html">The Game</a>
+                    <a href="leaderboard.html">Leaderboard</a>
+                    <a href="login.html" id="loginLink">Login</a>
+                    <img src="" alt="Profile Pic" id="navbarProfilePic" class="navbar-profile-pic" />
+                </div>
+            </nav>
+        </header>
+        <main class="content">
+            <div class="header-container">
+                <h1>Leaderboard</h1>
+                <img src="/assets/images/Logo.svg" alt="Shark Attack Logo" />
+            </div>
+            <ul class="leaderboard"></ul>
+        </main>
+        <footer class="footer">
+            <p>made with &lt;3 from the shark attack team</p>
+        </footer>
+        <script>
+            // Fetch top scores and update leaderboard
+            document.addEventListener("DOMContentLoaded", () => {
+                fetch("https://shark-cms.gloor.dev/wp-json/wp/v2/top-scores/")
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then((scores) => {
+                        updateLeaderboard(scores);
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching top scores:", error);
+                    });
+            });
+
+            // Update leaderboard with fetched scores
+            function updateLeaderboard(scores) {
+                const leaderboard = document.querySelector(".leaderboard");
+                leaderboard.innerHTML = ""; // Clear current leaderboard entries
+
+                // Toggle navbar links on hamburger icon click
+                document
+                    .getElementById("hamburger-icon")
+                    .addEventListener("click", function () {
+                        document.getElementById("navbar-links").classList.toggle("active");
+                    });
+
+                // Create leaderboard entries
+                scores.forEach((entry, index) => {
+                    const li = document.createElement("li");
+                    li.className = "leaderboard-entry";
+                    const defaultPicUrl = 'https://shark-game.gloor.dev/assets/images/Logo.svg';
+                    const profilePicUrl = entry.profile_pic || defaultPicUrl; // Use shark image if no profile pic
+                    li.innerHTML = `
+                        <span class="rank">#${index + 1}</span>
+                        <img src="${profilePicUrl}" alt="Profile Pic" class="leaderboard-profile-pic" />
+                        <span class="username">${entry.username}</span>
+                        <span class="score">${entry.score}</span>
+                    `;
+                    leaderboard.appendChild(li);
+                });
+            }
+
+            // Fetch and display profile picture
+            document.addEventListener("DOMContentLoaded", () => {
+                fetchAndDisplayProfilePicture("navbarProfilePic");
+            });
+        </script>
+    </body>
+</html>

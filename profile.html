@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>My profile</title>
+        <link rel="icon" href="./assets/images/favicon.png" type="image/png" />
+        <link rel="stylesheet" href="/css/styles.css" />
+        <script src="/js/login.js" defer type="module"></script>
+        <script src="/js/profilePicture.js" defer></script> 
+    </head>
+    <body>
+        <header>
+            <nav class="navbar">
+                <div class="navbar-logo">
+                    <span class="navbar-title"><a href="/">Shark Attack</a></span>
+                    <a href="/"
+                        ><img src="/assets/images/Logo.svg" alt="Shark Attack Logo"
+                    /></a>
+                </div>
+
+                <!-- Hamburger Icon -->
+                <div class="hamburger" id="hamburger-icon">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+
+                <div class="navbar-links" id="navbar-links">
+                    <a href="index.html">Homepage</a>
+                    <a href="https://shark.gloor.dev" target="_blank">About us</a>
+                    <a href="game.html">The Game</a>
+                    <a href="leaderboard.html">Leaderboard</a>
+                    <a href="login.html" id="loginLink">Login</a>
+                    <img
+                        src=""
+                        alt="Profile Pic"
+                        id="navbarProfilePic"
+                        class="navbar-profile-pic"
+                    />
+                </div>
+            </nav>
+        </header>
+        <main class="content">
+            <div class="header-container">
+                <h1>My Profile</h1>
+                <img src="/assets/images/Logo.svg" alt="Shark Attack Logo" />
+            </div>
+
+            <div class="profile-details">
+                <p><strong>Username:</strong> <span id="profileUsername"></span></p>
+                <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+                <p><strong>Best Score:</strong> <span id="bestScore"></span></p>
+                <p><strong>Profile Pic</strong></p>
+                <img id="profilePicture" src="" alt="Profile Picture" class="profile-picture" style="display: none" />
+
+                <div class="drag-drop-container" id="dropZone">
+                    <p>Drag and drop your profile picture here, or click to select a file.</p>
+                    <input type="file" id="profilePictureUpload" accept="image/*" style="display: none" onchange="handleFileSelect(event)" />
+                </div>
+
+                <div class="image-preview" id="imagePreview" style="display: none;">
+                    <img src="" alt="Image Preview" id="imagePreviewImg">
+                </div>
+
+                <div id="uploadStatus"></div>
+            </div>
+
+            <button id="logoutButton" class="main-btn">Logout</button>
+        </main>
+        <footer class="footer">
+            <p>made with &lt;3 from the shark attack team</p>
+        </footer>
+        <script>
+            // Event listeners for profile picture upload
+            document.getElementById("dropZone").addEventListener("dragover", handleDragOver, false);
+            document.getElementById("dropZone").addEventListener("drop", handleFileDrop, false);
+            document.getElementById("dropZone").addEventListener("click", () => document.getElementById("profilePictureUpload").click());
+
+            // Handle drag over event
+            function handleDragOver(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                e.dataTransfer.dropEffect = "copy";
+                document.getElementById("dropZone").classList.add("hover");
+            }
+
+            // Handle file drop event
+            function handleFileDrop(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                document.getElementById("dropZone").classList.remove("hover");
+                const files = e.dataTransfer.files;
+                handleFiles(files);
+            }
+
+            // Handle file select event
+            function handleFileSelect(e) {
+                handleFiles(e.target.files);
+            }
+
+            // Handle selected files
+            function handleFiles(files) {
+                if (files.length > 0) {
+                    const file = files[0];
+                    if (file.type.startsWith("image/")) {
+                        uploadProfilePicture(file);
+                    } else {
+                        alert("Please select an image file.");
+                    }
+                }
+            }
+
+            // Upload profile picture
+            function uploadProfilePicture(file) {
+                if (!file) {
+                    alert("Please select an image file.");
+                    return;
+                }
+
+                var formData = new FormData();
+                formData.append("image", file);
+
+                document.getElementById("uploadStatus").innerText = "Uploading...";
+
+                fetch("https://shark-cms.gloor.dev/wp-json/wp/v2/upload-profile-picture/", {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("userToken"),
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message) {
+                            document.getElementById("uploadStatus").innerText = "Upload successful!";
+                            fetchAndDisplayProfilePicture("profilePicture"); // Update the profile picture display
+                            fetchAndDisplayProfilePicture("navbarProfilePic"); // Update the navbar profile picture if needed
+                            showImagePreview(file); // Show image preview
+                        } else {
+                            document.getElementById("uploadStatus").innerText = "Upload failed: " + data.error;
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        document.getElementById("uploadStatus").innerText = "Error: " + error.message;
+                    });
+            }
+
+            // Show image preview
+            function showImagePreview(file) {
+                var reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById("imagePreviewImg").src = event.target.result;
+                    document.getElementById("imagePreview").style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
+
+            // Fetch and display user's best score
+            function fetchAndDisplayUserBestScore() {
+                if (window.location.pathname.endsWith("profile.html")) {
+                    const userToken = localStorage.getItem("userToken");
+
+                    fetch("https://shark-cms.gloor.dev/wp-json/wp/v2/user-best-score/", {
+                        method: "GET",
+                        headers: {
+                            Authorization: "Bearer " + userToken,
+                        },
+                    })
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then((bestScore) => {
+                            document.getElementById("bestScore").textContent = bestScore;
+                        })
+                        .catch((error) => {
+                            console.error("Error fetching user best score:", error);
+                        });
+                }
+            }
+
+            // Fetch and display profile picture
+            function fetchAndDisplayProfilePicture(elementId) {
+                const userToken = localStorage.getItem("userToken");
+
+                fetch("https://shark-cms.gloor.dev/wp-json/wp/v2/profile-picture/", {
+                    method: "GET",
+                    headers: {
+                        Authorization: "Bearer " + userToken,
+                    },
+                })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        if (data.profilePictureUrl) {
+                            document.getElementById(elementId).src = data.profilePictureUrl;
+                            document.getElementById(elementId).style.display = "block";
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching profile picture:", error);
+                    });
+            }
+
+            // Event listener for hamburger icon
+            document.getElementById("hamburger-icon").addEventListener("click", function () {
+                document.getElementById("navbar-links").classList.toggle("active");
+            });
+
+            // Event listener for DOMContentLoaded
+            document.addEventListener("DOMContentLoaded", () => {
+                fetchAndDisplayUserBestScore();
+                fetchAndDisplayProfilePicture("profilePicture");
+                fetchAndDisplayProfilePicture("navbarProfilePic");
+            });
+        </script>
+    </body>
+</html>

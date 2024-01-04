@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Register Page</title>
+        <link rel="stylesheet" href="/css/styles.css" />
+        <script src="/js/register.js" defer type="module"></script>
+        <script src="/js/login.js" defer type="module"></script>
+    </head>
+    <body>
+        <header>
+            <nav class="navbar">
+                <div class="navbar-logo">
+                    <span class="navbar-title">Shark Attack</span
+                    ><img src="/assets/images/Logo.svg" alt="Shark Attack Logo" />
+                </div>
+                <div class="navbar-links">
+                    <a href="index.html">Homepage</a>
+                    <a href="https://shark.gloor.dev" target="_blank">About us</a>
+                    <a href="game.html">The Game</a>
+                    <a href="leaderboard.html">Leaderboard</a>
+                    <a href="login.html" id="loginLink">Login</a>
+                </div>
+            </nav>
+        </header>
+        <main class="content">
+            <div class="header-container">
+                <h1>Register</h1>
+                <img src="/assets/images/Logo.svg" alt="Shark Attack Logo" />
+            </div>
+            <form id="registerForm" class="form-style">
+                <div id="errorContainer" style="display: none; color: red"></div>
+                <input type="text" id="username" placeholder="Username" required />
+                <div id="usernameError" class="error-message hidden"></div>
+                <input type="email" id="email" placeholder="Email" required />
+                <div class="input-group">
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Password"
+                        required
+                    />
+                    <span
+                        class="password-toggle"
+                        onclick="togglePasswordVisibility('password')"
+                        >&#128065;</span
+                    >
+                </div>
+                <div class="input-group">
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        placeholder="Confirm Password"
+                        required
+                    />
+                    <span
+                        class="password-toggle"
+                        onclick="togglePasswordVisibility('confirmPassword')"
+                        >&#128065;</span
+                    >
+                </div>
+                <button type="submit" class="form-btn">Register</button>
+                <hr />
+                <div class="main-buttons">
+                    <p>Already have an account?</p>
+                    <a class="main-btn" href="login.html">Login</a>
+                </div>
+            </form>
+        </main>
+        <footer class="footer">
+            <p>made with &lt;3 from the shark attack team</p>
+        </footer>
+        <script>
+            function togglePasswordVisibility(passwordFieldId) {
+                var passwordInput = document.getElementById(passwordFieldId);
+                if (passwordInput.type === "password") {
+                    passwordInput.type = "text";
+                } else {
+                    passwordInput.type = "password";
+                }
+            }
+        </script>
+    </body>
+</html>
