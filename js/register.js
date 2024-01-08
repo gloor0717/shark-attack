@@ -3,10 +3,10 @@ document
   .addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const username = document.getElementById("newUsername").value.trim();
+    const username = document.getElementById("username").value.trim();
     const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("newPassword").value;
-    const confirmPassword = document.getElementById("confirmPassword").value;
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value; 
 
     if (!isPasswordValid(password)) {
       let error = "";
